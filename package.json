@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "cucumber-js",
-    "run-pendingSearch": "node ./features/stepDefinations/pendingSearch.js"
+    "test:approveConsult": "cucumber-js features/approveConsult.feature",
+    "test:approvedSearch": "cucumber-js dermtodoorE2E/features/approvedSearch",
+    "test:loginPatient" : "cucumber-js features/patientLogin.feature",
+    "test:signUpPatient" :  "cucumber-js features/patientSignUp.feature",
+    "test:signUpDOBError" : "cucumber-js features/dobError.feature",
+    "test:signUpTermsError" : "cucumber-js features/acceptTermsError.feature",
+    "test:signUpWithAcne" : "cucumber-js features/patientSignUpAcne.feature"
+
   },
   "keywords": [],
   "author": "",
