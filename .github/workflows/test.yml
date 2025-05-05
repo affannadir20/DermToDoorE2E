@@ -1,0 +1,29 @@
+name: Run Playwright with Cucumber Tests
+
+on:
+  push:
+    branches:
+      - master  # or your default branch
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Adjust to your project's Node.js version
+
+      - name: Install dependencies
+        run: npm ci  # Use 'npm install' if you don't have a lock file
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run tests
+        run: npm test  # Ensure this script is defined in your package.json
