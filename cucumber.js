@@ -1,3 +1,3 @@
-export default {
-  default: '--require features/**/*.js --require features/stepDefinations/*.js --format progress-bar',
+module.exports = {
+  default: `--format progress-bar --format cucumber-json:./reports/cucumber_report.json --publish-quiet`,
 };
