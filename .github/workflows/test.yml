@@ -25,9 +25,21 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # Install xvfb and run tests in virtual display
+      # Install xvfb for headless testing
       - name: Install xvfb
         run: sudo apt-get install -y xvfb
 
+      # Run tests with xvfb
       - name: Run tests with xvfb
-        run: xvfb-run npm run test:signUpTermsError
+        run: xvfb-run npm run test:signUpDOBError
+
+      # Generate test reports
+      - name: Generate Cucumber Reports
+        run: npm run generate-reports
+
+      # Upload the reports as artifacts
+      - name: Upload Test Reports as Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: reports/
