@@ -3,7 +3,7 @@ name: Run Playwright with Cucumber Tests
 on:
   push:
     branches:
-      - master  # or your default branch
+      - master
   pull_request:
 
 jobs:
@@ -17,13 +17,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Adjust to your project's Node.js version
+          node-version: '20'
 
       - name: Install dependencies
-        run: npm ci  # Use 'npm install' if you don't have a lock file
+        run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run tests
-        run: npm test  # Ensure this script is defined in your package.json
+      - name: Run signUpDOBError test
+        run: npm run test:signUpTermsError
+
