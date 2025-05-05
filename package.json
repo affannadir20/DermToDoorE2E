@@ -11,7 +11,8 @@
     "test:signUpPatient" :  "cucumber-js features/patientSignUp.feature",
     "test:signUpDOBError" : "cucumber-js features/dobError.feature",
     "test:signUpTermsError" : "cucumber-js features/acceptTermsError.feature",
-    "test:signUpWithAcne" : "cucumber-js features/patientSignUpAcne.feature"
+    "test:signUpWithAcne" : "cucumber-js features/patientSignUpAcne.feature",
+    "generate-reports": "node generate-reports.js"
 
   },
   "keywords": [],
