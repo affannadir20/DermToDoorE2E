@@ -10,7 +10,7 @@ class CustomWorld {
 
     async launchBrowser() {
         if (!this.browser) {
-            this.browser = await chromium.launch({ headless: false }); // Use headless: true in CI
+            this.browser = await chromium.launch({ headless: true }); // Use headless: true in CI
         }
         this.context = await this.browser.newContext();
         this.page = await this.context.newPage();
