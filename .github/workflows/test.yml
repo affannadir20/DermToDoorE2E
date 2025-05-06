@@ -3,7 +3,7 @@ name: Run Playwright with Cucumber Tests
 on:
   push:
     branches:
-      - master
+      - reporting-setup
   pull_request:
 
 jobs:
