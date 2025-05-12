@@ -1,6 +1,6 @@
-const axios = require('axios');
-const fs = require('fs');
-const dayjs = require('dayjs');
+import axios from 'axios';
+import fs from 'fs';
+import dayjs from 'dayjs';
 
 const CHECKLY_API_KEY = process.env.CHECKLY_API_KEY;
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
