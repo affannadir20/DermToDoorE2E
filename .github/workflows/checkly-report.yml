@@ -1,1 +1,28 @@
 
+name: Daily Checkly Report
+
+on:
+  schedule:
+    - cron: '0 18 * * *' # Every day at 6pm UTC
+  workflow_dispatch:     # Allows manual triggering
+
+jobs:
+  run-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Checkly report
+        run: node daily-checkly-report.js
+        env:
+          CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
