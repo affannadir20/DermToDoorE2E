@@ -14,7 +14,8 @@ const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 console.log('CHECKLY_API_KEY from env:', CHECKLY_API_KEY ? '✅ present' : '❌ missing');
 console.log('SLACK_WEBHOOK_URL from env:', SLACK_WEBHOOK_URL ? '✅ present' : '❌ missing');
 
-const CHECKLY_API_URL = 'https://api.checklyhq.com/v1/checks?include=latestRun';
+// Corrected API URL - removed unsupported query param
+const CHECKLY_API_URL = 'https://api.checklyhq.com/v1/checks';
 
 async function fetchChecks() {
   try {
