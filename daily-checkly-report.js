@@ -36,8 +36,15 @@ async function fetchChecks() {
 
 function generateSummary(checks) {
   const today = dayjs().utc().startOf('day');
+  console.log("Today UTC start:", today.format());
 
-  const reportChecks = checks.filter(check => check.tags?.includes('daily-report'));
+  const reportChecks = checks.filter(check => {
+    const hasTag = check.tags?.includes('daily-report');
+    if (!hasTag) {
+      console.log(`Check "${check.name}" skipped (tags: ${check.tags})`);
+    }
+    return hasTag;
+  });
 
   if (reportChecks.length === 0) return "⚠️ No checks found with tag 'daily-report'.";
 
@@ -45,8 +52,7 @@ function generateSummary(checks) {
     const lastRun = check.lastCheckTime ? dayjs(check.lastCheckTime).utc() : null;
     const status = check.lastCheckResult?.status || 'unknown';
 
-    console.log(`Last run time (UTC): ${lastRun?.format()}`);
-    console.log(`Today start UTC: ${today.format()}`);
+    console.log(`🕒 ${check.name} ran at ${lastRun?.format()} (UTC)`);
 
     if (lastRun && lastRun.isAfter(today)) {
       return `✅ ${check.name}: **${status.toUpperCase()}** at ${lastRun.format('HH:mm')} UTC`;
@@ -57,6 +63,7 @@ function generateSummary(checks) {
 
   return `📝 *Checkly Daily Summary Report - ${dayjs().format('YYYY-MM-DD')}*\n\n${summary}`;
 }
+
 
 
 async function sendToSlack(reportText) {
