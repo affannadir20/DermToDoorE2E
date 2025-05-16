@@ -1,5 +1,7 @@
-require('dotenv').config();
-const axios = require('axios');
+import dotenv from 'dotenv';
+import axios from 'axios';
+
+dotenv.config();
 
 const CHECKLY_API_KEY = process.env.CHECKLY_API_KEY;
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
@@ -36,7 +38,6 @@ async function fetchChecks() {
   }
 }
 
-// Updated function to fetch latest run for a check using /v1/runs with checkId filter
 async function fetchLatestRun(checkId) {
   try {
     const response = await axios.get('https://api.checklyhq.com/v1/runs', {
@@ -48,7 +49,7 @@ async function fetchLatestRun(checkId) {
       params: {
         checkId: checkId,
         limit: 1,
-        orderBy: 'desc' // latest run first
+        orderBy: 'desc'
       }
     });
     return response.data[0] || null;
