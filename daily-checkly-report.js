@@ -19,13 +19,14 @@ const CHECKLY_API_URL = 'https://api.checklyhq.com/v1/checks';
 
 async function fetchChecks() {
   try {
-    const response = await axios.get('https://api.checklyhq.com/v1/checks', {
+    const response = await axios.get('https://api.checklyhq.com/v1/checks?include=latestRun', {
   headers: {
     Authorization: `Bearer ${process.env.CHECKLY_API_KEY}`,
     'x-checkly-account': process.env.CHECKLY_ACCOUNT_ID,
     Accept: 'application/json'
   }
 });
+
     return response.data;
   } catch (error) {
     console.error('Error fetching Checkly checks:', error.message);
