@@ -33,14 +33,14 @@ async function fetchChecks() {
 }
 
 function generateSummary(checks) {
-  const today = dayjs().startOf('day');
+  const today = dayjs().utc().startOf('day');
   const reportChecks = checks.filter(check => check.tags?.includes('daily-report'));
   console.log(reportChecks);
 
   if (reportChecks.length === 0) return "⚠️ No checks found with tag 'daily-report'.";
 
   const summary = reportChecks.map(check => {
-    const lastRun = check.lastCheckTime ? dayjs(check.lastCheckTime) : null;
+    const lastRun = check.lastCheckTime ? dayjs(check.lastCheckTime).utc() : null;
     const status = check.lastCheckResult?.status || 'unknown';
 
     if (lastRun && lastRun.isAfter(today)) {
