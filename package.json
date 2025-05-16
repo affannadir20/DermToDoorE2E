@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.49.1",
+    "dotenv": "^16.0.0",
     "axios": "^1.6.0",           
     "dayjs": "^1.11.10" 
   }
