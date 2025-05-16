@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import fs from 'fs';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+dayjs.extend(utc);
 
 dotenv.config();
 
