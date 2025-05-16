@@ -14,7 +14,6 @@ const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 console.log('CHECKLY_API_KEY from env:', CHECKLY_API_KEY ? '✅ present' : '❌ missing');
 console.log('SLACK_WEBHOOK_URL from env:', SLACK_WEBHOOK_URL ? '✅ present' : '❌ missing');
 
-// Corrected API URL - removed unsupported query param
 const CHECKLY_API_URL = 'https://api.checklyhq.com/v1/checks';
 
 async function fetchChecks() {
@@ -35,15 +34,32 @@ async function fetchChecks() {
   }
 }
 
-function generateSummary(checks) {
+async function fetchLatestRun(checkId) {
+  try {
+    const response = await axios.get(`https://api.checklyhq.com/v1/checks/${checkId}/runs?limit=1`, {
+      headers: {
+        Authorization: `Bearer ${CHECKLY_API_KEY}`,
+        'x-checkly-account': process.env.CHECKLY_ACCOUNT_ID,
+        Accept: 'application/json'
+      }
+    });
+    return response.data[0] || null;
+  } catch (error) {
+    console.error(`Error fetching runs for check ${checkId}:`, error.message);
+    return null;
+  }
+}
+
+async function generateSummary(checks) {
   const today = dayjs().utc().startOf('day');
   console.log("Today UTC start:", today.format());
 
-  const reportChecks = checks.filter(check => {
+  const summaryLines = [];
+
+  for (const check of checks) {
     const tags = check.tags || [];
     const hasTag = tags.includes('daily-report');
 
-    // Debug log for each check
     console.log(`🔍 Check: "${check.name}"`);
     console.log(`     ID: ${check.id}`);
     console.log(`     Tags: ${JSON.stringify(tags)}`);
@@ -51,27 +67,31 @@ function generateSummary(checks) {
 
     if (!hasTag) {
       console.log(`     ⏭ Skipped (no matching tag)`);
+      continue;
     }
 
-    return hasTag;
-  });
+    const latestRun = await fetchLatestRun(check.id);
 
-  if (reportChecks.length === 0) return "⚠️ No checks found with tag 'daily-report'.";
+    if (!latestRun) {
+      summaryLines.push(`❓ ${check.name}: No runs found`);
+      continue;
+    }
 
-  const summary = reportChecks.map(check => {
-    const lastRun = check.lastCheckTime ? dayjs(check.lastCheckTime).utc() : null;
-    const status = check.lastCheckResult?.status || 'unknown';
+    const lastRunTime = dayjs(latestRun.startedAt).utc();
+    const status = latestRun.status || 'unknown';
 
-    console.log(`🕒 ${check.name} ran at ${lastRun?.format()} (UTC)`);
+    console.log(`🕒 ${check.name} ran at ${lastRunTime.format()} (UTC) with status ${status}`);
 
-    if (lastRun && lastRun.isAfter(today)) {
-      return `✅ ${check.name}: **${status.toUpperCase()}** at ${lastRun.format('HH:mm')} UTC`;
+    if (lastRunTime.isAfter(today)) {
+      summaryLines.push(`✅ ${check.name}: **${status.toUpperCase()}** at ${lastRunTime.format('HH:mm')} UTC`);
     } else {
-      return `❓ ${check.name}: No run today`;
+      summaryLines.push(`❓ ${check.name}: No run today`);
     }
-  }).join('\n');
+  }
 
-  return `📝 *Checkly Daily Summary Report - ${dayjs().format('YYYY-MM-DD')}*\n\n${summary}`;
+  if (summaryLines.length === 0) return "⚠️ No checks found with tag 'daily-report'.";
+
+  return `📝 *Checkly Daily Summary Report - ${dayjs().format('YYYY-MM-DD')}*\n\n${summaryLines.join('\n')}`;
 }
 
 async function sendToSlack(reportText) {
@@ -89,8 +109,10 @@ async function sendToSlack(reportText) {
 (async () => {
   const checks = await fetchChecks();
   console.log("Total checks fetched:", checks.length);
-  console.log("Sample check data:\n", JSON.stringify(checks[0], null, 2));
-  const report = generateSummary(checks);
+  if (checks.length > 0) {
+    console.log("Sample check data:\n", JSON.stringify(checks[0], null, 2));
+  }
+  const report = await generateSummary(checks);
 
   console.log(report);
 
